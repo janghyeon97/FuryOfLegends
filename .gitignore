@@ -117,6 +117,12 @@ DerivedDataCache/*
 
 */Content/Developers
 
+*/Content/__ExternalActors__
+
+*/Content/__ExternalObjects__
+
+*/Content/Collections
+
 ##################
 
 #VS Generated Files#
