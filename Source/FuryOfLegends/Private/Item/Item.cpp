@@ -7,7 +7,6 @@
 
 AItem::AItem()
 {
-    // Ability function mapping for applying and removing abilities
     FunctionMap.Add(ECharacterStat::MaxHealthPoints, &AItem::ModifyMaxHealthPoints);
     FunctionMap.Add(ECharacterStat::MaxManaPoints, &AItem::ModifyMaxManaPoints);
     FunctionMap.Add(ECharacterStat::HealthRegeneration, &AItem::ModifyHealthRegeneration);

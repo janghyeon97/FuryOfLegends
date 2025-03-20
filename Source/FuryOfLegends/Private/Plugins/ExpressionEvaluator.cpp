@@ -95,7 +95,7 @@ bool ExpressionEvaluator::Tokenize(const std::string& expression, std::istringst
  * @param   variables 변수 이름과 값을 저장한 맵.
  * @return  처리에 성공하면 true, 에러 발생 시 false를 반환합니다.
  */
-bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<double>& values, std::stack<char>& operators, const std::unordered_map<std::string, double>& variables)
+bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<double>& values, std::stack<char>& operators)
 {
     char token;
 
@@ -112,17 +112,6 @@ bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<do
         double value;
         tokens >> value;
         values.push(value);
-    }
-
-    // 변수 처리: 변수명을 읽고 변수 맵에서 값을 찾아 스택에 저장
-    else if (std::isalpha(token))
-    {
-        tokens.putback(token);
-        std::string var;
-        tokens >> var;
-        auto it = variables.find(var);
-        if (it == variables.end()) return false;  // 알 수 없는 변수일 경우 에러 처리
-        values.push(it->second);
     }
 
     // 여는 괄호는 스택에 저장
@@ -176,7 +165,7 @@ bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<do
  * @param   result 계산된 결과를 저장할 참조 변수.
  * @return  계산에 성공하면 true, 실패하면 false를 반환합니다.
  */
-bool ExpressionEvaluator::Evaluate(const std::string& expression, const std::unordered_map<std::string, double>& variables, double& result) {
+bool ExpressionEvaluator::Evaluate(const std::string& expression, double& result) {
     std::istringstream tokens;
     if (!Tokenize(expression, tokens)) return false;
 
@@ -184,7 +173,7 @@ bool ExpressionEvaluator::Evaluate(const std::string& expression, const std::uno
     std::stack<char> operators;
 
     // 수식을 토큰 단위로 처리
-    while (ProcessToken(tokens, values, operators, variables));
+    while (ProcessToken(tokens, values, operators));
 
     // 남은 연산자 처리
     while (!operators.empty()) 

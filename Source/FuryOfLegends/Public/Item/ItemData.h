@@ -97,11 +97,16 @@ public:
 
 private:
 	FString ApplyColorTags(const FString& Text) const;
-	FString ReplaceStatTags(const FString& Text, UStatComponent* StatComponent) const;
+	FString ReplaceLineBreakTags(const FString& Text) const;
+
+	FString ReplaceItemStatTags(const FString& Text) const;
+	FString ReplaceItemAttributeTags(const FString& Text) const;
+	FString ReplaceCharacterStatTags(const FString& Text, UStatComponent* StatComponent) const;
+
 	FString ReplaceCalcTags(const FString& Text, UStatComponent* StatComponent) const;
 
-	TMap<FString, TFunction<float(const UStatComponent&)>> StatGetters;
-	TMap<FString, TFunction<int32(const UStatComponent&)>> StatGettersInt;
+	TMap<ECharacterStat, TFunction<float(const UStatComponent&)>> StatGetters;
+	TMap<ECharacterStat, TFunction<int32(const UStatComponent&)>> StatGettersInt;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")

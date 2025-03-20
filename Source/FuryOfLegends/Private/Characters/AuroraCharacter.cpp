@@ -824,6 +824,7 @@ void AAuroraCharacter::R_CheckHit()
 
 	const FActionAttributes& StatTable = ActionStatComponent->GetActionAttributes(EActionSlot::R);
 	const FActiveActionState& ActiveAbilityState = ActionStatComponent->GetActiveActionState(EActionSlot::R);
+	const float FirstDelay = GetUniqueAttribute(EActionSlot::R, "FirstDelay", 1.5f);
 
 	ServerModifyCharacterState(ECharacterStateOperation::Remove, ECharacterState::R);
 
@@ -837,7 +838,14 @@ void AAuroraCharacter::R_CheckHit()
 		return;
 	}
 
-	ScheduleExplosion(InitialTargets, AffectedCharacters);
+	//ScheduleExplosion(InitialTargets, AffectedCharacters);
+
+	FTimerHandle SlowTimer;
+	TSharedPtr<TSet<TWeakObjectPtr<ACharacterBase>>> TargetsCopy = MakeShared<TSet<TWeakObjectPtr<ACharacterBase>>>(InitialTargets);
+	GetWorldTimerManager().SetTimer(SlowTimer, [this, TargetsCopy, AffectedCharacters]()
+		{
+			ScheduleExplosion(*TargetsCopy, AffectedCharacters);
+		}, FirstDelay, false, FirstDelay);
 }
 
 // 초기 슬로우

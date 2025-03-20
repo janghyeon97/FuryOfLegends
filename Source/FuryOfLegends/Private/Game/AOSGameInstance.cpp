@@ -18,16 +18,6 @@ void UAOSGameInstance::Init()
 {
 	Super::Init();
 
-	if (!::IsValid(ChampionList))
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%s] ChampionsList is not valid."), ANSI_TO_TCHAR(__FUNCTION__));
-	}
-
-	if (!::IsValid(MinionsList))
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%s] MinionDataTable is not valid."), ANSI_TO_TCHAR(__FUNCTION__));
-	}
-
 	if (IsDedicatedServerInstance())
 	{
 		UMultiplaySessionSubsystem* SubSystem = GetSubsystem<UMultiplaySessionSubsystem>();
@@ -37,10 +27,7 @@ void UAOSGameInstance::Init()
 		}
 
 		SubSystem->CreateSession(true, false, "DedicatedServerSession", 10, "Aurora", "");
-		UE_LOG(LogTemp, Log, TEXT("[%s] Session 'MainSession' created successfully with max players: 10, map: 'Aurora'."), ANSI_TO_TCHAR(__FUNCTION__));
 	}
-
-	GameInstanceID = FGuid::NewGuid().ToString();
 }
 
 void UAOSGameInstance::Shutdown()

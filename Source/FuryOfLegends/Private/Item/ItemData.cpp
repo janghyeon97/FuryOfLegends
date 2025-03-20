@@ -23,23 +23,23 @@ FItemTableRow::FItemTableRow()
 	, ItemClass(nullptr)
 {
 	StatGetters = {
-		{TEXT("MaxHealth"), [](const UStatComponent& StatComponent) { return StatComponent.GetMaxHP(); }},
-		{TEXT("CurrentHealth"), [](const UStatComponent& StatComponent) { return StatComponent.GetCurrentHP(); }},
-		{TEXT("MaxMana"), [](const UStatComponent& StatComponent) { return StatComponent.GetMaxMP(); }},
-		{TEXT("CurrentMana"), [](const UStatComponent& StatComponent) { return StatComponent.GetCurrentMP(); }},
-		{TEXT("HealthRegeneration"), [](const UStatComponent& StatComponent) { return StatComponent.GetHealthRegeneration(); }},
-		{TEXT("ManaRegeneration"), [](const UStatComponent& StatComponent) { return StatComponent.GetManaRegeneration(); }},
-		{TEXT("AttackDamage"), [](const UStatComponent& StatComponent) { return StatComponent.GetAttackDamage(); }},
-		{TEXT("AbilityPower"), [](const UStatComponent& StatComponent) { return StatComponent.GetAbilityPower(); }},
-		{TEXT("DefensePower"), [](const UStatComponent& StatComponent) { return StatComponent.GetDefensePower(); }},
-		{TEXT("MagicResistance"), [](const UStatComponent& StatComponent) { return StatComponent.GetMagicResistance(); }},
-		{TEXT("AttackSpeed"), [](const UStatComponent& StatComponent) { return StatComponent.GetAttackSpeed(); }},
-		{TEXT("MovementSpeed"), [](const UStatComponent& StatComponent) { return StatComponent.GetMovementSpeed(); }},
+		{ ECharacterStat::MaxHealthPoints, [](const UStatComponent& StatComponent) { return StatComponent.GetMaxHP(); } },
+		{ ECharacterStat::CurrentHealth, [](const UStatComponent& StatComponent) { return StatComponent.GetCurrentHP(); }},
+		{ ECharacterStat::MaxManaPoints, [](const UStatComponent& StatComponent) { return StatComponent.GetMaxMP(); }},
+		{ ECharacterStat::CurrentMana, [](const UStatComponent& StatComponent) { return StatComponent.GetCurrentMP(); }},
+		{ ECharacterStat::HealthRegeneration, [](const UStatComponent& StatComponent) { return StatComponent.GetHealthRegeneration(); }},
+		{ ECharacterStat::ManaRegeneration, [](const UStatComponent& StatComponent) { return StatComponent.GetManaRegeneration(); }},
+		{ ECharacterStat::AttackDamage, [](const UStatComponent& StatComponent) { return StatComponent.GetAttackDamage(); }},
+		{ ECharacterStat::AbilityPower, [](const UStatComponent& StatComponent) { return StatComponent.GetAbilityPower(); }},
+		{ ECharacterStat::DefensePower, [](const UStatComponent& StatComponent) { return StatComponent.GetDefensePower(); }},
+		{ ECharacterStat::MagicResistance, [](const UStatComponent& StatComponent) { return StatComponent.GetMagicResistance(); }},
+		{ ECharacterStat::AttackSpeed, [](const UStatComponent& StatComponent) { return StatComponent.GetAttackSpeed(); }},
+		{ ECharacterStat::MovementSpeed, [](const UStatComponent& StatComponent) { return StatComponent.GetMovementSpeed(); }},
 	};
 
 	StatGettersInt = {
-		{TEXT("AbilityHaste"), [](const UStatComponent& StatComponent) { return StatComponent.GetAbilityHaste(); }},
-		{TEXT("CriticalChance"), [](const UStatComponent& StatComponent) { return StatComponent.GetCriticalChance(); }},
+		{ ECharacterStat::AbilityHaste, [](const UStatComponent& StatComponent) { return StatComponent.GetAbilityHaste(); }},
+		{ ECharacterStat::CriticalChance, [](const UStatComponent& StatComponent) { return StatComponent.GetCriticalChance(); }},
 	};
 }
 
@@ -60,7 +60,7 @@ FString FItemTableRow::ConverClassificationToString() const
 	case EItemClassification::Legendary:            return TEXT("Legendary");
 	case EItemClassification::Distributed:          return TEXT("Distributed");
 	case EItemClassification::ChampionExclusive:    return TEXT("Champion Exclusive");
-	default:                                    return TEXT("Unknown");
+	default:										return TEXT("Unknown");
 	}
 }
 
@@ -100,27 +100,39 @@ FString FItemTableRow::ConvertToRichText(UStatComponent* StatComponent) const
 		return Result;
 	}
 
-	// 색상 구분자 처리
-	Result = ApplyColorTags(Result);
+	// 스탯 태그 변환
+	Result = ReplaceCharacterStatTags(Result, StatComponent);
+	Result = ReplaceItemStatTags(Result);
+	Result = ReplaceItemAttributeTags(Result);
 
-	// StatComponent 값 구분자 처리
-	Result = ReplaceStatTags(Result, StatComponent);
-
-	// 수식 구분자 처리
+	// 수식 태그 변환
 	Result = ReplaceCalcTags(Result, StatComponent);
+
+	// 줄바꿈 태그 변환
+	Result = ReplaceLineBreakTags(Result);
 
 	return Result;
 }
 
 
 
+
+FString FItemTableRow::ReplaceLineBreakTags(const FString& Text) const
+{
+	return Text.Replace(TEXT("<br>"), TEXT("\n"));
+}
+
+
+
+
 /**
+ * ---------------- 현재 사용 하지 않음 ----------------
  * ApplyColorTags 함수는 주어진 텍스트에서 색상 구분자를 찾아
  * HTML 태그 형식으로 대체합니다.
  *
  * @param Text: 입력 텍스트입니다.
  * @return 색상 태그가 적용된 텍스트입니다.
- */
+
 FString FItemTableRow::ApplyColorTags(const FString& Text) const
 {
 	FString Result = Text;
@@ -130,6 +142,53 @@ FString FItemTableRow::ApplyColorTags(const FString& Text) const
 	Result = Result.Replace(TEXT("{/color}"), TEXT("</>"));
 	return Result;
 }
+ */
+
+
+FString FItemTableRow::ReplaceItemAttributeTags(const FString& Text) const
+{
+	FString Result = Text;
+
+	for (const auto& Pair : UniqueAttributes)
+	{
+		FString Tag = FString::Printf(TEXT("<ItemAttribute=%s>"), *Pair.Key.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("ItemAttribute Tag: %s"), *Tag);
+
+		Result = Result.Replace(*Tag, *FString::FromInt(Pair.Value));
+	}
+
+	return Result;
+}
+
+
+/**
+ * ReplaceItemStatTags 함수는 주어진 텍스트에서 {ItemStat=...} 형식의 스탯 구분자를 찾아
+ * 해당 구분자를 StatModifiers의 값으로 대체합니다.
+ *
+ * @param Text: 입력 텍스트입니다.
+ * @return 변환된 텍스트입니다.
+ */
+FString FItemTableRow::ReplaceItemStatTags(const FString& Text) const
+{
+	const UEnum* EnumPtr = StaticEnum<ECharacterStat>();
+	FString Result = Text;
+
+	for (const FItemStatModifier& Modifier : StatModifiers)
+	{
+		if (!EnumPtr || !EnumPtr->IsValidEnumValue(static_cast<int64>(Modifier.Key))) {
+			UE_LOG(LogTemp, Error, TEXT("InitializeActions: EnumPtr is None."));
+			continue;
+		}
+
+		FString Tag = FString::Printf(TEXT("<ItemStat=%s>"), *EnumPtr->GetNameStringByValue(static_cast<int64>(Modifier.Key)));
+		UE_LOG(LogTemp, Warning, TEXT("ItemStat Tag: %s"), *Tag);
+
+		Result = Result.Replace(*Tag, *FString::SanitizeFloat(Modifier.Value));
+	}
+
+	return Result;
+}
+	
 
 
 /**
@@ -145,48 +204,63 @@ FString FItemTableRow::ApplyColorTags(const FString& Text) const
  * 2. StatGetters 맵을 순회하여 각 스탯 구분자를 StatComponent의 값으로 대체합니다.
  * 3. StatGettersInt 맵을 순회하여 각 스탯 구분자를 StatComponent의 정수 값으로 대체합니다.
  */
-FString FItemTableRow::ReplaceStatTags(const FString& Text, UStatComponent* StatComponent) const
+FString FItemTableRow::ReplaceCharacterStatTags(const FString& Text, UStatComponent* StatComponent) const
 {
-	FString Result = Text;
-
-	// StatComponent가 유효하지 않으면 반환
 	if (!StatComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ReplaceStatTags] Invalid StatComponent."));
-		return Result;
+		UE_LOG(LogTemp, Warning, TEXT("[ReplaceCharacterStatTags] Invalid StatComponent."));
+		return Text;
 	}
-	
 
-	// StatGetters의 각 함수 포인터를 사용하여 값 대체
-	for (const auto& Pair : StatGetters)
+	FString Result = Text;
+	const UEnum* EnumPtr = StaticEnum<ECharacterStat>();
+
+	// 정규식 패턴으로 <CharacterStat=StatName> 찾기
+	const FRegexPattern StatPattern(TEXT("<CharacterStat=([A-Za-z0-9_]+)>"));
+	FRegexMatcher Matcher(StatPattern, Text);
+
+	// 변환할 태그 목록 저장 (한 번에 처리하기 위해)
+	TArray<FString> TagsToReplace;
+	TArray<FString> Replacements;
+
+	while (Matcher.FindNext())
 	{
-		FString Tag = FString::Printf(TEXT("{stat=%s}"), *Pair.Key);
-		if (StatGetters.Contains(Pair.Key))
+		FString StatName = Matcher.GetCaptureGroup(1);  // 예: "MaxHealthPoints"
+
+		ECharacterStat StatEnum = (ECharacterStat)EnumPtr->GetValueByNameString(StatName);
+
+		if (StatEnum == ECharacterStat::None)
 		{
-			float Value = Pair.Value(*StatComponent); 
-			Result = Result.Replace(*Tag, *FString::SanitizeFloat(Value));
+			UE_LOG(LogTemp, Warning, TEXT("[ReplaceCharacterStatTags] Invalid stat name: %s"), *StatName);
+			continue;  // 변환 실패 시 스킵
+		}
+
+		// 실수(float) 스탯 변환
+		if (const TFunction<float(const UStatComponent&)>* StatFunc = StatGetters.Find(StatEnum))
+		{
+			float Value = (*StatFunc)(*StatComponent);
+			TagsToReplace.Add(Matcher.GetCaptureGroup(0)); // <CharacterStat=MaxHealthPoints>
+			Replacements.Add(FString::Printf(TEXT("%.2f"), Value)); // 100.00 같은 값
+		}
+		// 정수(int) 스탯 변환
+		else if (const TFunction<int32(const UStatComponent&)>* StatFuncInt = StatGettersInt.Find(StatEnum))
+		{
+			int32 Value = (*StatFuncInt)(*StatComponent);
+			TagsToReplace.Add(Matcher.GetCaptureGroup(0)); // <CharacterStat=AbilityHaste>
+			Replacements.Add(FString::Printf(TEXT("%d"), Value)); // 10 같은 값
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[ReplaceStatTags] Stat not found: %s"), *Pair.Key);
+			UE_LOG(LogTemp, Warning, TEXT("[ReplaceCharacterStatTags] Stat not found: %s"), *StatName);
 		}
 	}
 
-	// StatGettersInt의 각 함수 포인터를 사용하여 값 대체
-	for (const auto& Pair : StatGettersInt)
+	// 한 번에 태그를 치환하여 정규식 충돌 방지
+	for (int32 i = 0; i < TagsToReplace.Num(); i++)
 	{
-		FString Tag = FString::Printf(TEXT("{stat=%s}"), *Pair.Key);
-		if (StatGettersInt.Contains(Pair.Key))
-		{
-			int32 Value = Pair.Value(*StatComponent); 
-			Result = Result.Replace(*Tag, *FString::FromInt(Value));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[ReplaceStatTags] Stat not found: %s"), *Pair.Key);
-		}
+		Result = Result.Replace(*TagsToReplace[i], *Replacements[i]);
 	}
-	
+
 	return Result;
 }
 
@@ -210,27 +284,13 @@ FString FItemTableRow::ReplaceCalcTags(const FString& Text, UStatComponent* Stat
 		return Text;
 	}
 
-	
-	// std::unordered_map을 사용하여 변수 준비
-	std::unordered_map<std::string, double> Variables;
-	for (const auto& Pair : StatGetters)
-	{
-		Variables[std::string(TCHAR_TO_UTF8(*Pair.Key))] = Pair.Value(*StatComponent);
-	}
-
-	for (const auto& Pair : StatGettersInt)
-	{
-		Variables[std::string(TCHAR_TO_UTF8(*Pair.Key))] = static_cast<double>(Pair.Value(*StatComponent));
-	}
-
-
 	FString Result = Text;
 	int32 StartIndex = 0;
 
-	while ((StartIndex = Result.Find(TEXT("{calc="), ESearchCase::IgnoreCase, ESearchDir::FromStart, StartIndex)) != INDEX_NONE)
+	while ((StartIndex = Result.Find(TEXT("<calc="), ESearchCase::IgnoreCase, ESearchDir::FromStart, StartIndex)) != INDEX_NONE)
 	{
 		// 수식 구분자 찾기
-		int32 EndIndex = Result.Find(TEXT("}"), ESearchCase::IgnoreCase, ESearchDir::FromStart, StartIndex);
+		int32 EndIndex = Result.Find(TEXT(">"), ESearchCase::IgnoreCase, ESearchDir::FromStart, StartIndex);
 		if (EndIndex == INDEX_NONE || EndIndex <= StartIndex)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[ReplaceCalcTags] Invalid or mismatched braces in CalcTag."));
@@ -245,10 +305,10 @@ FString FItemTableRow::ReplaceCalcTags(const FString& Text, UStatComponent* Stat
 
 		// 수식 평가	
 		double CalcResult = 0.0;
-		if (ExpressionEvaluator().Evaluate(CalcStr, Variables, CalcResult))
+		if (ExpressionEvaluator().Evaluate(CalcStr, CalcResult))
 		{
 			// 평가된 결과를 수식 태그와 교체
-			Result = Result.Replace(*FString::Printf(TEXT("{calc=%s}"), *CalcTag), *FString::SanitizeFloat(CalcResult));
+			Result = Result.Replace(*FString::Printf(TEXT("<calc=%s>"), *CalcTag), *FString::SanitizeFloat(CalcResult));
 		}
 		else
 		{

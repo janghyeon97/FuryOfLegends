@@ -555,6 +555,7 @@ void UUW_ItemShop::AddNodesBreadthFirst(UUW_ItemEntry* RootNode)
 
 
 /**
+ * X 현재 사용하지 않음 X 
  * AddChildNodesRecursively 함수는 주어진 부모 노드를 기준으로 깊이 우선 탐색 방식으로
  * 모든 자식 노드를 순회하며 계층 구조를 UI에 재귀적으로 추가하는 역할을 합니다.
  *
