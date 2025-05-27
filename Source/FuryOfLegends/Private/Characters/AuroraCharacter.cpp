@@ -111,7 +111,7 @@ void AAuroraCharacter::Tick(float DeltaSeconds)
 			{
 				if (!CharacterStateString.IsEmpty())
 				{
-					CharacterStateString += TEXT(", "); // 🌟 여러 상태가 있을 경우 쉼표로 구분
+					CharacterStateString += TEXT(", ");
 				}
 				CharacterStateString += EnumPtr->GetNameStringByIndex(i);
 			}
