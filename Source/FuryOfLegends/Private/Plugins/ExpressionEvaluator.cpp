@@ -17,17 +17,17 @@ ExpressionEvaluator::~ExpressionEvaluator()
 
 
 /**
- * @brief   ÀÌ ÇÔ¼ö´Â ÇÇ¿¬»êÀÚ ½ºÅÃ¿¡¼­ µÎ °³ÀÇ °ªÀ» ²¨³» ÁÖ¾îÁø ¿¬»êÀÚ `op`¸¦ Àû¿ëÇÏ¿© °è»êÀ» ¼öÇàÇÕ´Ï´Ù.
- *          °è»êµÈ °á°ú´Â ´Ù½Ã ÇÇ¿¬»êÀÚ ½ºÅÃ¿¡ ÀúÀåµË´Ï´Ù. ´õÇÏ±â, »©±â, °öÇÏ±â, ³ª´©±â, °ÅµìÁ¦°ö ¿¬»êÀ» Áö¿øÇÏ¸ç,
- *          ³ª´©±â ¿¬»ê Áß 0À¸·Î ³ª´©´Â °æ¿ì°¡ ¹ß»ıÇÏ¸é `false`¸¦ ¹İÈ¯ÇÏ¿© ¿¡·¯¸¦ Ã³¸®ÇÕ´Ï´Ù.
- *          ¼º°øÀûÀ¸·Î ¿¬»êÀÌ ¿Ï·áµÇ¸é `true`¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @brief   ì´ í•¨ìˆ˜ëŠ” í”¼ì—°ì‚°ì ìŠ¤íƒì—ì„œ ë‘ ê°œì˜ ê°’ì„ êº¼ë‚´ì–´ ì£¼ì–´ì§„ ì—°ì‚°ì `op`ë¥¼ ì ìš©í•˜ì—¬ ê²°ê³¼ë¥¼ ê³„ì‚°í•©ë‹ˆë‹¤.
+ *          ê³„ì‚° ê²°ê³¼ëŠ” ë‹¤ì‹œ í”¼ì—°ì‚°ì ìŠ¤íƒì— í‘¸ì‹œë©ë‹ˆë‹¤. ë§ì…ˆ, ëº„ì…ˆ, ê³±ì…ˆ, ë‚˜ëˆ—ì…ˆ, ì§€ìˆ˜ì—°ì‚°ì„ ì§€ì›í•˜ë©°,
+ *          ë‚˜ëˆ—ì…ˆ ì—°ì‚° ì‹œ 0ìœ¼ë¡œ ë‚˜ëˆ„ëŠ” ê²½ìš°ê°€ ë°œìƒí•˜ë©´ `false`ë¥¼ ë°˜í™˜í•˜ì—¬ ì˜¤ë¥˜ë¥¼ ì²˜ë¦¬í•©ë‹ˆë‹¤.
+ *          ì„±ê³µì ìœ¼ë¡œ ì—°ì‚°ì´ ì™„ë£Œë˜ë©´ `true`ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  *
- * @param   values ÇÇ¿¬»êÀÚ¸¦ ÀúÀåÇÏ´Â ½ºÅÃ.
- * @param   op Àû¿ëÇÒ ¿¬»êÀÚ.
- * @return  ¿¬»êÀÌ ¼º°øÇÏ¸é true, ¿À·ù°¡ ¹ß»ıÇÏ¸é false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @param   values í”¼ì—°ì‚°ìë¥¼ ì €ì¥í•˜ëŠ” ìŠ¤íƒ.
+ * @param   op ì ìš©í•  ì—°ì‚°ì.
+ * @return  ì—°ì‚°ì´ ì„±ê³µí•˜ë©´ true, ì˜¤ë¥˜ê°€ ë°œìƒí•˜ë©´ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  */
 bool ExpressionEvaluator::ApplyOperator(std::stack<double>& values, char op) {
-    if (values.size() < 2) return false;  // ÇÇ¿¬»êÀÚ°¡ ÃæºĞÇÑÁö È®ÀÎ
+    if (values.size() < 2) return false;  // í”¼ì—°ì‚°ìê°€ ë¶€ì¡±í•œì§€ í™•ì¸
 
     double right = values.top(); values.pop();
     double left = values.top(); values.pop();
@@ -37,11 +37,11 @@ bool ExpressionEvaluator::ApplyOperator(std::stack<double>& values, char op) {
     case '-': values.push(left - right); break;
     case '*': values.push(left * right); break;
     case '/':
-        if (right == 0) return false;  // 0À¸·Î ³ª´©±â ¿¡·¯ Ã³¸®
+        if (right == 0) return false;  // 0ìœ¼ë¡œ ë‚˜ëˆ„ê¸° ì˜¤ë¥˜ ì²˜ë¦¬
         values.push(left / right);
         break;
     case '^': values.push(std::pow(left, right)); break;
-    default: return false;  // ¾Ë ¼ö ¾ø´Â ¿¬»êÀÚ
+    default: return false;  // ì•Œ ìˆ˜ ì—†ëŠ” ì—°ì‚°ì
     }
     return true;
 }
@@ -50,30 +50,30 @@ bool ExpressionEvaluator::ApplyOperator(std::stack<double>& values, char op) {
 
 
 /**
- * @brief   ÁÖ¾îÁø ¿¬»êÀÚÀÇ ¿ì¼±¼øÀ§¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
- *          ´õÇÏ±â¿Í »©±â´Â ¿ì¼±¼øÀ§ 1, °öÇÏ±â¿Í ³ª´©±â´Â 2, °ÅµìÁ¦°öÀº 3À» ¹İÈ¯ÇÕ´Ï´Ù.
- *          ¾Ë ¼ö ¾ø´Â ¿¬»êÀÚ°¡ ÀÔ·ÂµÇ¸é 0À» ¹İÈ¯ÇÕ´Ï´Ù.
+ * @brief   ì£¼ì–´ì§„ ì—°ì‚°ìì˜ ìš°ì„ ìˆœìœ„ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+ *          ë§ì…ˆê³¼ ëº„ì…ˆì€ ìš°ì„ ìˆœìœ„ 1, ê³±ì…ˆê³¼ ë‚˜ëˆ—ì…ˆì€ 2, ì§€ìˆ˜ì—°ì‚°ì€ 3ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+ *          ì•Œ ìˆ˜ ì—†ëŠ” ì—°ì‚°ìê°€ ì…ë ¥ë˜ë©´ 0ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
  *
- * @param   op ¿ì¼±¼øÀ§¸¦ È®ÀÎÇÒ ¿¬»êÀÚ.
- * @return  ÇØ´ç ¿¬»êÀÚÀÇ ¿ì¼±¼øÀ§¸¦ ³ªÅ¸³»´Â Á¤¼ö °ª.
+ * @param   op ìš°ì„ ìˆœìœ„ë¥¼ í™•ì¸í•  ì—°ì‚°ì.
+ * @return  í•´ë‹¹ ì—°ì‚°ìì˜ ìš°ì„ ìˆœìœ„ë¥¼ ë‚˜íƒ€ë‚´ëŠ” ì •ìˆ˜ ê°’.
  */
 int ExpressionEvaluator::Precedence(char op) const {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/') return 2;
     if (op == '^') return 3;
-    return 0;  // ¾Ë ¼ö ¾ø´Â ¿¬»êÀÚÀÏ °æ¿ì
+    return 0;  // ì•Œ ìˆ˜ ì—†ëŠ” ì—°ì‚°ìì˜ ê²½ìš°
 }
 
 
 
 /**
- * @brief   ¼ö½Ä ¹®ÀÚ¿­À» ÅäÅ« ½ºÆ®¸²À¸·Î º¯È¯ÇÕ´Ï´Ù.
- *          ÀÌ ÅäÅ« ½ºÆ®¸²Àº ÀÌÈÄ ¼ö½Ä Æò°¡ °úÁ¤¿¡¼­ »ç¿ëµË´Ï´Ù.
- *          À¯È¿ÇÑ ¼ö½ÄÀÌ¸é `true`, ±×·¸Áö ¾ÊÀ¸¸é `false`¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @brief   ìˆ˜ì‹ ë¬¸ìì—´ì„ í† í° ìŠ¤íŠ¸ë¦¼ìœ¼ë¡œ ë³€í™˜í•©ë‹ˆë‹¤.
+ *          ê° í† í° ìŠ¤íŠ¸ë¦¼ì€ ìˆ«ì ë˜ëŠ” ê° ì—°ì‚°ìë¥¼ ë‹´ìŠµë‹ˆë‹¤.
+ *          ìœ íš¨í•œ í‘œí˜„ì‹ì´ë©´ `true`, ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ `false`ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  *
- * @param   expression ÀÔ·ÂµÈ ¼ö½Ä ¹®ÀÚ¿­.
- * @param   tokens ÅäÅ«È­µÈ °á°ú¸¦ ÀúÀåÇÒ ½ºÆ®¸².
- * @return  À¯È¿ÇÑ ¼ö½ÄÀÌ¸é true, ¾Æ´Ï¸é false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @param   expression ì…ë ¥ëœ ìˆ˜ì‹ ë¬¸ìì—´.
+ * @param   tokens í† í°í™”ëœ ê²°ê³¼ë¥¼ ì €ì¥í•  ìŠ¤íŠ¸ë¦¼.
+ * @return  ìœ íš¨í•œ í‘œí˜„ì‹ì´ë©´ true, ì•„ë‹ˆë©´ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  */
 bool ExpressionEvaluator::Tokenize(const std::string& expression, std::istringstream& tokens) {
     tokens.str(expression);
@@ -84,28 +84,28 @@ bool ExpressionEvaluator::Tokenize(const std::string& expression, std::istringst
 
 
 /**
- * @brief   ¼ö½ÄÀ» ±¸¼ºÇÏ´Â °¢ ÅäÅ«(¼ıÀÚ, º¯¼ö, ¿¬»êÀÚ, °ıÈ£ µî)À» Ã³¸®ÇÕ´Ï´Ù.
- *          ¼ıÀÚ´Â ÇÇ¿¬»êÀÚ ½ºÅÃ¿¡, ¿¬»êÀÚ´Â ¿¬»êÀÚ ½ºÅÃ¿¡ ÀúÀåµÇ¸ç, °ıÈ£¿Í ¿ì¼±¼øÀ§¿¡ µû¶ó ¿¬»êÀ» Ã³¸®ÇÕ´Ï´Ù.
- *          º¯¼ö´Â ÁÖ¾îÁø º¯¼ö ¸Ê¿¡¼­ °ªÀ» ÂüÁ¶ÇÏ¿© Ã³¸®ÇÕ´Ï´Ù.
- *          ¼º°øÀûÀ¸·Î Ã³¸®µÇ¸é `true`, ¿¡·¯°¡ ¹ß»ıÇÏ¸é `false`¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @brief   ì—°ì‚°ì„ ì²˜ë¦¬í•˜ëŠ” ê° í† í°(ìˆ«ì, ê´„í˜¸, ì—°ì‚°ì, ë³€ìˆ˜ ë“±)ì„ ì²˜ë¦¬í•©ë‹ˆë‹¤.
+ *          ìˆ«ìëŠ” í”¼ì—°ì‚°ì ìŠ¤íƒì—, ì—°ì‚°ìëŠ” ì—°ì‚°ì ìŠ¤íƒì— ì €ì¥ë˜ë©°, ê´„í˜¸ëŠ” ìš°ì„ ìˆœìœ„ë¥¼ ìœ„í•´ ì—°ì‚°ì„ ì²˜ë¦¬í•©ë‹ˆë‹¤.
+ *          ë³€ìˆ˜ëŠ” ì£¼ì–´ì§„ ê°’ì„ ì°¾ì•„ í•„ìš”ì— ë”°ë¼ ì¹˜í™˜í•˜ì—¬ ì²˜ë¦¬í•©ë‹ˆë‹¤.
+ *          ì„±ê³µì ìœ¼ë¡œ ì²˜ë¦¬ë˜ë©´ `true`, ì˜¤ë¥˜ê°€ ë°œìƒí•˜ë©´ `false`ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  *
- * @param   tokens ÅäÅ«È­µÈ ¼ö½Ä ½ºÆ®¸².
- * @param   values ÇÇ¿¬»êÀÚ¸¦ ÀúÀåÇÏ´Â ½ºÅÃ.
- * @param   operators ¿¬»êÀÚ¸¦ ÀúÀåÇÏ´Â ½ºÅÃ.
- * @param   variables º¯¼ö ÀÌ¸§°ú °ªÀ» ÀúÀåÇÑ ¸Ê.
- * @return  Ã³¸®¿¡ ¼º°øÇÏ¸é true, ¿¡·¯ ¹ß»ı ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @param   tokens í† í°í™”ëœ ìˆ˜ì‹ ìŠ¤íŠ¸ë¦¼.
+ * @param   values í”¼ì—°ì‚°ìë¥¼ ì €ì¥í•˜ëŠ” ìŠ¤íƒ.
+ * @param   operators ì—°ì‚°ìë¥¼ ì €ì¥í•˜ëŠ” ìŠ¤íƒ.
+ * @param   variables ë³€ìˆ˜ ì´ë¦„ê³¼ ê°’ì˜ ë§¤í•‘ì„ ë‹´ì€ ë§µ.
+ * @return  ì²˜ë¦¬ê°€ ì„±ê³µí•˜ë©´ true, ì˜¤ë¥˜ ë°œìƒ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  */
 bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<double>& values, std::stack<char>& operators)
 {
     char token;
 
-    // ÅäÅ«À» ÀĞ´Âµ¥ ½ÇÆĞÇÒ °æ¿ì false¸¦ ¹İÈ¯ÇÏ¿© ·çÇÁ¸¦ Á¾·á
+    // í† í°ì„ ì½ëŠ”ë° ì‹¤íŒ¨í•œ ê²½ìš° falseë¥¼ ë°˜í™˜í•˜ì—¬ ë£¨í”„ë¥¼ ì¢…ë£Œ
     if (!(tokens >> token))
     {
         return false;
     }
 
-    // ¼ıÀÚ Ã³¸®: ÅäÅ«À» ¼ıÀÚ·Î º¯È¯ÇÏ¿© ½ºÅÃ¿¡ ÀúÀå
+    // ìˆ«ì ì²˜ë¦¬: í† í°ì„ ìˆ«ìë¡œ ë³€í™˜í•˜ì—¬ ìŠ¤íƒì— ì €ì¥
     if (std::isdigit(token) || token == '.')
     {
         tokens.putback(token);
@@ -114,13 +114,13 @@ bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<do
         values.push(value);
     }
 
-    // ¿©´Â °ıÈ£´Â ½ºÅÃ¿¡ ÀúÀå
+    // ì—¬ëŠ” ê´„í˜¸ë¥¼ ìŠ¤íƒì— ì €ì¥
     else if (token == '(')
     {
         operators.push(token);
     }
 
-    // ´İ´Â °ıÈ£¸¦ ¸¸³ª¸é ¿©´Â °ıÈ£¸¦ ¸¸³¯ ¶§±îÁö ¿¬»êÀ» ¼öÇà
+    // ë‹«ëŠ” ê´„í˜¸ëŠ” ì—¬ëŠ” ê´„í˜¸ê¹Œì§€ ëª¨ë“  ì—°ì‚°ìë¥¼ ì²˜ë¦¬
     else if (token == ')')
     {
         while (!operators.empty() && operators.top() != '(')
@@ -129,11 +129,11 @@ bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<do
             operators.pop();
         }
 
-        if (operators.empty()) return false;  // °ıÈ£ ºÒÀÏÄ¡ ¿¡·¯
-        operators.pop();  // ¿©´Â °ıÈ£ Á¦°Å
+        if (operators.empty()) return false;  // ê´„í˜¸ ë¶ˆì¼ì¹˜ ì˜¤ë¥˜
+        operators.pop();  // ì—¬ëŠ” ê´„í˜¸ ì œê±°
     }
 
-    // ¿¬»êÀÚ Ã³¸®: ¿ì¼±¼øÀ§¿¡ µû¶ó ¿¬»êÀÚ Àû¿ë
+    // ì—°ì‚°ì ì²˜ë¦¬: ìš°ì„ ìˆœìœ„ë¥¼ ê³ ë ¤ ì—°ì‚°ì„ ìˆ˜í–‰
     else if (std::strchr("+-*/^", token))
     {
         while (!operators.empty() && Precedence(operators.top()) >= Precedence(token))
@@ -145,7 +145,7 @@ bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<do
     }
     else
     {
-        return false; // À¯È¿ÇÏÁö ¾ÊÀº ÅäÅ«ÀÌ¸é false ¹İÈ¯
+        return false; // ìœ íš¨í•˜ì§€ ì•Šì€ í† í°ì´ë©´ false ë°˜í™˜
     }
 
     return true;
@@ -155,15 +155,15 @@ bool ExpressionEvaluator::ProcessToken(std::istringstream& tokens, std::stack<do
 
 
 /**
- * @brief   ¼ö½ÄÀ» Æò°¡ÇÏ´Â ¸ŞÀÎ ÇÔ¼öÀÔ´Ï´Ù.
- *          ¸ÕÀú ¼ö½ÄÀ» ÅäÅ«À¸·Î º¯È¯ÇÑ ÈÄ, °¢ ÅäÅ«À» Ã³¸®ÇÏ¿© ÇÇ¿¬»êÀÚ¿Í ¿¬»êÀÚ¸¦ ½ºÅÃ¿¡ ÀúÀåÇÕ´Ï´Ù.
- *          ¿¬»êÀÚ°¡ ¸ğµÎ Ã³¸®µÇ¸é ÃÖÁ¾ °á°ú°¡ ÇÇ¿¬»êÀÚ ½ºÅÃ¿¡ ³²À¸¸ç, ±× °ªÀ» result º¯¼ö¿¡ ÀúÀåÇÕ´Ï´Ù.
- *          ¿¬»ê °úÁ¤¿¡¼­ ¿À·ù°¡ ¹ß»ıÇÏ¸é `false`, ¼º°ø ½Ã `true`¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @brief   ì—°ì‚°ì„ í‰ê°€í•˜ëŠ” ë©”ì¸ í•¨ìˆ˜ì…ë‹ˆë‹¤.
+ *          ìˆ˜ì‹ ë¬¸ìì—´ì„ í† í°ìœ¼ë¡œ ë³€í™˜í•œ í›„, ê° í† í°ì„ ì²˜ë¦¬í•˜ì—¬ í”¼ì—°ì‚°ìì™€ ì—°ì‚°ìë¥¼ ìŠ¤íƒì— ì €ì¥í•©ë‹ˆë‹¤.
+ *          ì—°ì‚°ìê°€ ëª¨ë‘ ì²˜ë¦¬ë˜ë©´ ìµœì¢… ê²°ê³¼ê°€ í”¼ì—°ì‚°ì ìŠ¤íƒì— ë‚¨ìœ¼ë©°, ê·¸ ê°’ì„ result ë³€ìˆ˜ì— ì €ì¥í•©ë‹ˆë‹¤.
+ *          ìˆ˜ì‹ ê³„ì‚°ì—ì„œ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ë©´ `false`, ì„±ê³µ ì‹œ `true`ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  *
- * @param   expression Æò°¡ÇÒ ¼ö½Ä.
- * @param   variables º¯¼ö ÀÌ¸§°ú ±× °ªÀ» ÀúÀåÇÑ ¸Ê.
- * @param   result °è»êµÈ °á°ú¸¦ ÀúÀåÇÒ ÂüÁ¶ º¯¼ö.
- * @return  °è»ê¿¡ ¼º°øÇÏ¸é true, ½ÇÆĞÇÏ¸é false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+ * @param   expression ìˆ˜ì‹ ë¬¸ìì—´.
+ * @param   variables ë³€ìˆ˜ ì´ë¦„ê³¼ ê·¸ ê°’ì„ ë‹´ì€ ë§¤í•‘ ë§µ.
+ * @param   result ê³„ì‚° ê²°ê³¼ë¥¼ ì €ì¥í•  ì°¸ì¡° ë³€ìˆ˜.
+ * @return  ê³„ì‚°ì— ì„±ê³µí•˜ë©´ true, ì‹¤íŒ¨í•˜ë©´ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
  */
 bool ExpressionEvaluator::Evaluate(const std::string& expression, double& result) {
     std::istringstream tokens;
@@ -172,17 +172,17 @@ bool ExpressionEvaluator::Evaluate(const std::string& expression, double& result
     std::stack<double> values;
     std::stack<char> operators;
 
-    // ¼ö½ÄÀ» ÅäÅ« ´ÜÀ§·Î Ã³¸®
+    // ë‚¨ì•„ìˆëŠ” í† í° ìˆœì°¨ì  ì²˜ë¦¬
     while (ProcessToken(tokens, values, operators));
 
-    // ³²Àº ¿¬»êÀÚ Ã³¸®
+    // ë‚¨ì€ ì—°ì‚°ì ì²˜ë¦¬
     while (!operators.empty()) 
     {
         if (!ApplyOperator(values, operators.top())) return false;
         operators.pop();
     }
 
-    if (values.size() != 1) return false;  // °á°ú°¡ ´ÜÀÏ °ªÀÌ ¾Æ´Ï¸é ¿¡·¯
+    if (values.size() != 1) return false;  // ê²°ê³¼ê°€ í•˜ë‚˜ ê°’ì´ ì•„ë‹ˆë©´ ì˜¤ë¥˜
     result = values.top();
 
     return true;
