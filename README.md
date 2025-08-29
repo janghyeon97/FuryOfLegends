@@ -3,8 +3,8 @@
 **Fury of Legends**는 Unreal Engine 5 기반으로 제작된 네트워크 멀티플레이 AOS 게임입니다.  
 
 ## 포트폴리오 문서 
-## 1. ![포트폴리오 PDF](Docs/FuryOfLegends_언리얼 엔진5_포트폴리오_최장현.gif)
-## 2. ![포트폴리오 영상](https://www.youtube.com/watch?v=0hS6p3nxGZA?t=0s)
+## ![포트폴리오 PDF](Docs/FuryOfLegends_언리얼 엔진5_포트폴리오_최장현.pdf)
+## [![포트폴리오 영상](http://img.youtube.com/vi/0hS6p3nxGZA/0.jpg)](https://youtu.be/0hS6p3nxGZA?t=0s)
 
 ---
 
